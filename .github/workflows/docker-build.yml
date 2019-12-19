@@ -15,5 +15,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag docker.pkg.github.com/vertical-evolution-v3vo-ab/postgres-backup/postgres-backup:latest
+    - name: Docker Build
+      env:
+        DOCKER_USER: ${{ secrets.DOCKER_USER }}
+        DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+      run: |
+        docker build . -t docker.pkg.github.com/vertical-evolution-v3vo-ab/postgres-backup/postgres-backup:latest
+        echo $DOCKER_TOKEN | docker login docker.pkg.github.com --username "$DOCKER_USER" --password-stdin
+        docker push docker.pkg.github.com/vertical-evolution-v3vo-ab/postgres-backup/postgres-backup:latest
+        
