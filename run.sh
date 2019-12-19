@@ -17,7 +17,7 @@ set -e
 
 MAX_BACKUPS=${MAX_BACKUPS}
 
-BACKUP_NAME=\$(date +\%Y.\%m.\%d.\%H\%M\%S).psql.gz
+BACKUP_NAME=\$(date +\%Y-\%m-\%d_\%H\%M\%S).psql.gz
 
 echo "=> Backup started: \${BACKUP_NAME}"
 if ${BACKUP_CMD} ;then
@@ -47,7 +47,7 @@ cat <<EOF >> /restore.sh
 set -e
 
 echo "=> Restore database from \$1"
-if cat \$1 | gzip -d | ${PG_PASS} pg_restore -h ${PG_HOST} -p ${PG_PORT} -U ${PG_USER} -d ${PG_DB} ;then
+if cat \$1 | gzip -d | ${PG_PASS} psql -h ${PG_HOST} -p ${PG_PORT} -U ${PG_USER} ${PG_DB} ;then
     echo "   Restore succeeded"
 else
     echo "   Restore failed"
@@ -55,10 +55,6 @@ fi
 echo "=> Done"
 EOF
 chmod +x /restore.sh
-
-touch /pg_backup.log
-chown $UID:$GID /pg_backup.log
-exec su-exec $UID:$GID tail -F /pg_backup.log &
 
 if [ -n "${INIT_BACKUP}" ]; then
     echo "=> Create a backup on startup"
@@ -73,10 +69,10 @@ elif [ -n "${INIT_RESTORE_LATEST}" ]; then
     ls -d -1 /backup/* | tail -1 | xargs /restore.sh
 fi
 
-if [ -n "${NO_CRON}" ]; then
-    echo "NO_CRON set, exiting"
-else
-    echo "${CRON_TIME} /backup.sh >> /pg_backup.log 2>&1" > /crontab.conf
-    echo "=> Running cron job"
-    exec su-exec $UID:$GID go-crond $UID:/crontab.conf
-fi
+printenv > /etc/environment
+crontab /etc/cron.d/crontab
+chmod -R 0644 /etc/cron.d
+cron
+touch /var/log/cron.log
+
+tail -f /var/log/cron.log

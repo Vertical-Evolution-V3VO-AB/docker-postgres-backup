@@ -23,4 +23,3 @@ jobs:
         docker build . -t docker.pkg.github.com/vertical-evolution-v3vo-ab/postgres-backup/postgres-backup:latest
         echo $DOCKER_TOKEN | docker login docker.pkg.github.com --username "$DOCKER_USER" --password-stdin
         docker push docker.pkg.github.com/vertical-evolution-v3vo-ab/postgres-backup/postgres-backup:latest
-        

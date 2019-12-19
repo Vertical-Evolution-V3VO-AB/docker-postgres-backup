@@ -1,16 +1,16 @@
-FROM alpine:3.5
-MAINTAINER Fabrizio Steiner <stffabi@users.noreply.github.com>
+FROM ilix/debian-cron
 
-RUN apk add --no-cache postgresql tzdata su-exec openssl && \
-    mkdir /backup
+RUN mkdir /backup
+RUN apt-get -y install tzdata openssl wget lsb-release netcat
 
-RUN GOCROND_VERSION=0.3.0 \
-    && wget -O /usr/local/bin/go-crond https://github.com/webdevops/go-crond/releases/download/$GOCROND_VERSION/go-crond-64-linux \
-    && chmod +x /usr/local/bin/go-crond
+# Install PostgreSQL 11
+RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
+RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
+RUN apt-get update
+RUN apt-get -y install postgresql postgresql-contrib
 
 ENV UID=65534 \
     GID=65534 \
-    CRON_TIME="0 0 * * *" \
     PG_DB="postgres" \
     PG_HOST="postgres" \
     PG_PORT="5432" \
@@ -20,6 +20,7 @@ ENV UID=65534 \
 
 ADD run.sh /run.sh
 
-VOLUME ["/backup"]
+COPY crontab /etc/cron.d/crontab
 
+VOLUME ["/backup"]
 CMD ["/run.sh"]
