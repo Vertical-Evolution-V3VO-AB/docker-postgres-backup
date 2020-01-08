@@ -39,7 +39,6 @@ Moreover, if you link `stffabi/postgres-backup` to a postgres container with an 
     AWS_ACCESS_KEY_ID     the access key used to connect to the Space
     AWS_SECRET_ACCESS_KEY the secret used to connect to the Space
 
-
 ## Restore from a backup
 
 See the list of backups, you can run:
