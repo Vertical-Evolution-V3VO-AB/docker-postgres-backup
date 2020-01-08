@@ -4,7 +4,7 @@ RUN mkdir /backup
 
 # Install deps
 RUN apt-get update && \
-    apt-get -y install tzdata openssl wget lsb-release netcat
+    apt-get -y install tzdata openssl wget lsb-release netcat s3cmd
 
 # Install PostgreSQL 11
 RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
