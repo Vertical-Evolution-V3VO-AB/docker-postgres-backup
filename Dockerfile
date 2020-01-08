@@ -1,13 +1,16 @@
 FROM ilix/debian-cron
 
 RUN mkdir /backup
-RUN apt-get -y install tzdata openssl wget lsb-release netcat
+
+# Install deps
+RUN apt-get update && \
+    apt-get -y install tzdata openssl wget lsb-release netcat
 
 # Install PostgreSQL 11
 RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
 RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" >> /etc/apt/sources.list.d/pgdg.list'
-RUN apt-get update
-RUN apt-get -y install postgresql postgresql-contrib
+RUN apt-get update && \
+    apt-get -y install postgresql postgresql-contrib
 
 ENV UID=65534 \
     GID=65534 \
