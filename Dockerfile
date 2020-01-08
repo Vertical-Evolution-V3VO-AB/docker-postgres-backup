@@ -25,5 +25,8 @@ ADD run.sh /run.sh
 
 COPY crontab /etc/cron.d/crontab
 
+COPY s3.sh /s3.sh
+COPY .s3cfg /root/.s3cfg
+
 VOLUME ["/backup"]
 CMD ["/run.sh"]
