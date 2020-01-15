@@ -4,7 +4,8 @@ RUN mkdir /backup
 
 # Install deps
 RUN apt-get update && \
-    apt-get -y install tzdata openssl wget lsb-release netcat s3cmd
+    apt-get -y install tzdata openssl wget lsb-release netcat \
+    s3cmd curl
 
 # Install PostgreSQL 11
 RUN wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
@@ -25,7 +26,7 @@ ADD run.sh /run.sh
 
 COPY crontab /etc/cron.d/crontab
 
-COPY s3.sh /s3.sh
+COPY sync.sh /sync.sh
 COPY .s3cfg /root/.s3cfg
 
 VOLUME ["/backup"]
