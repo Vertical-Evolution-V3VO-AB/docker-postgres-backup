@@ -1,4 +1,4 @@
-FROM ilix/debian-cron
+FROM aczigler/cron
 
 RUN mkdir /backup
 
